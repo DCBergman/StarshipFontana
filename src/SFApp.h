@@ -36,8 +36,13 @@ private:
   shared_ptr<SFBoundingBox>  app_box;
   list<shared_ptr<SFAsset> > projectiles;
   list<shared_ptr<SFAsset> > aliens;
+  list<shared_ptr<SFAsset> > walls;
   list<shared_ptr<SFAsset> > coins;
 
   int fire;
+ int score;	 //initialise score
+ int deadCoins;
+  char direction;
+
 };
 #endif

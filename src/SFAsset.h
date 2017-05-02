@@ -21,7 +21,7 @@ using namespace std;
  * enum to mark the type of the SFAsset.  If we add more asset types then
  * the subclassing strategy becomes a better option.
  */
-enum SFASSETTYPE {SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_ALIEN, SFASSET_COIN};
+enum SFASSETTYPE {SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_ALIEN, SFASSET_COIN, SFASSET_WALL};
 
 class SFAsset {
 public:
@@ -36,9 +36,14 @@ public:
   virtual void      GoEast();
   virtual void      GoWest();
   virtual void      GoNorth();
+  virtual void		GoNorthL();
+  virtual void		GoSouth();
+  virtual void		GoSouthA();
   virtual void      SetNotAlive();
   virtual bool      IsAlive();
   virtual void      HandleCollision();
+  virtual void      HandlePlayerCollision(char c);
+
 
   virtual bool                      CollidesWith(shared_ptr<SFAsset>);
   virtual shared_ptr<SFBoundingBox> GetBoundingBox();
@@ -52,6 +57,7 @@ private:
   SFASSETTYPE                 type;
   SFAssetId                   id;
   std::shared_ptr<SFWindow>   sf_window;
+  //SFASSETSDIRECTION			direction;
 
   static int SFASSETID;
 };

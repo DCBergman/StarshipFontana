@@ -2,6 +2,13 @@
 
 int SFAsset::SFASSETID=0;
 
+bool goSouth = true;
+bool goNorth = true;
+bool goWest = true;
+bool goEast = true;
+//char direction = 'W';
+//char c;
+
 SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window): type(type), sf_window(window) {
   this->id   = ++SFASSETID;
 
@@ -18,6 +25,8 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window): type(type)
   case SFASSET_COIN:
     sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/coin.png");
     break;
+  case SFASSET_WALL:
+	  sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/wall.png");
   }
 
   if(!sprite) {
@@ -95,28 +104,94 @@ void SFAsset::OnRender() {
 
 void SFAsset::GoWest() {
   Vector2 c = *(bbox->centre) + Vector2(-5.0f, 0.0f);
-  if(!(c.getX() < 0)) {
+
+  if(!(c.getX() < 0) && goWest == true) {
     bbox->centre.reset();
     bbox->centre = make_shared<Vector2>(c);
-  }
+
+  }else{
+	  goWest = true;
+}
+
 }
 
 void SFAsset::GoEast() {
+
   int w, h;
   SDL_GetRendererOutputSize(sf_window->getRenderer(), &w, &h);
 
   Vector2 c = *(bbox->centre) + Vector2(5.0f, 0.0f);
-  if(!(c.getX() > w)) {
+  if(!(c.getX() > w) && goEast == true) {
     bbox->centre.reset();
     bbox->centre = make_shared<Vector2>(c);
-  }
+
+
+  }else{
+	  goEast = true;
+}
 }
 
 void SFAsset::GoNorth() {
-  Vector2 c = *(bbox->centre) + Vector2(0.0f, 1.0f);
+
+
+  Vector2 c = *(bbox->centre) + Vector2(0.0f, 3.0f);
   bbox->centre.reset();
   bbox->centre = make_shared<Vector2>(c);
+
 }
+
+void SFAsset::GoNorthL() {
+
+	int w, h;
+	  SDL_GetRendererOutputSize(sf_window->getRenderer(), &w, &h);
+
+  Vector2 c = *(bbox->centre) + Vector2(0.0f, 3.0f);
+  if(SFASSET_COIN==type) {
+
+
+  if (!(c.getY()>(h- 50))){
+
+	  bbox->centre.reset();
+	    	bbox->centre = make_shared<Vector2>(c);
+
+  }
+  }
+  else if(!(c.getY() > h) && goNorth == true){
+  	bbox->centre.reset();
+  	bbox->centre = make_shared<Vector2>(c);
+
+
+
+
+  }else {
+	  goNorth = true;
+}
+}
+
+void SFAsset::GoSouth() {
+
+  Vector2 c = *(bbox->centre) + Vector2(0.0f, -3.0f);
+  if(!(c.getY() < 0) && goSouth == true){
+  	bbox->centre.reset();
+  	bbox->centre = make_shared<Vector2>(c);
+
+
+  }else{
+  	  goSouth = true;
+  }
+
+}
+void SFAsset::GoSouthA() {
+
+
+  Vector2 c = *(bbox->centre) + Vector2(0.0f, -0.75f);
+  	bbox->centre.reset();
+  	bbox->centre = make_shared<Vector2>(c);
+
+
+  }
+
+
 
 bool SFAsset::CollidesWith(shared_ptr<SFAsset> other) {
   return bbox->CollidesWith(other->bbox);
@@ -135,7 +210,31 @@ bool SFAsset::IsAlive() {
 }
 
 void SFAsset::HandleCollision() {
-  if(SFASSET_PROJECTILE == type || SFASSET_ALIEN == type) {
+  if(SFASSET_PROJECTILE == type || SFASSET_ALIEN == type || SFASSET_COIN == type) {
     SetNotAlive();
   }
+
 }
+void SFAsset::HandlePlayerCollision(char c) {
+	char direction = c;
+	switch (direction) {
+
+		  	  case 'W':
+		  		  goWest = false;
+		  		  GoEast();
+		  	    break;
+		  	  case 'E':
+		  		  goEast = false;
+		  		GoWest();
+		  	    break;
+		  	  case 'N':
+		  		  goNorth = false;
+		  		GoSouth();
+		  		  break;
+		  	 case 'S':
+		  		 goSouth= false;
+		  		GoNorth();
+		  		  break;
+		  	  }
+
+ }
